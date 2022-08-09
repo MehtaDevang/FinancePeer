@@ -1,6 +1,7 @@
 Django
 django-picklefield
 djangorestframework
+django-cors-headers 
 numpy
 jsonfield
 pandas
