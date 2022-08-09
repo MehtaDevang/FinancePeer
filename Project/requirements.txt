@@ -1,0 +1,6 @@
+Django
+django-picklefield
+djangorestframework
+numpy
+jsonfield
+pandas
