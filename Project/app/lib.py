@@ -1,4 +1,5 @@
 from app.models import ApiUser, File
+import pickle
 
 INCORRECT_STRINGS = ["", None]
 
@@ -32,3 +33,21 @@ def add_json_to_db(name:str, data:dict, username:str):
     file_obj.uploaded_by = user
     file_obj.content = data
     file_obj.save()
+
+def get_uploaded_files(username:str):
+    files = File.objects.filter(uploaded_by__username=username)
+    print(files)
+
+    file_details = []
+    for file in files:
+        file_details.append({
+            "file_name": file.name,
+            "upload_date" : file.upload_date
+        })
+
+    return file_details
+
+def get_file_content(username:str, file_name:str):
+    file = File.objects.get(uploaded_by__username = username, name=file_name)
+    content = file.content
+    return content

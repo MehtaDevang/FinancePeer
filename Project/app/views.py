@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
-from .lib import check_existence, create_new_user, add_json_to_db
+from .lib import check_existence, create_new_user, add_json_to_db, get_uploaded_files, get_file_content
 from .models import *
 
 import json
@@ -90,4 +90,37 @@ class Validator(APIView):
             raise e
         return JsonResponse({
             "message": "Data uploaded successfully..."
+        })
+
+class Files(APIView):
+    def get(self, request):
+        # print("hello")
+        # print(request)
+        username = request.GET.get("username", None)
+        # print(username)
+        files = get_uploaded_files(username)
+
+        if not len(files):
+            return JsonResponse({
+                "error": "No Existing Files Found"
+            })
+        
+        return JsonResponse({
+            "files" : files
+        })
+
+class FileDetails(APIView):
+    def get(self, request):
+        username = request.GET.get("username", None)
+        file_name = request.GET.get("file_name", None)
+
+        content = get_file_content(username, file_name)
+        print(content)
+
+        if not content:
+            return JsonResponse({
+                "error": "Unable to fetch file contents"
+            })
+        return JsonResponse({
+            "content": content
         })
