@@ -8,9 +8,10 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
-from .lib import check_existence, create_new_user
+from .lib import check_existence, create_new_user, add_json_to_db
 from .models import *
 
+import json
 
 class Login(APIView):        
     def post(self, request):
@@ -72,12 +73,21 @@ class User(APIView):
 class Validator(APIView):
 
     def post(self, request):
-        print(request.body)
-        file = request.POST.get("file", None)
+        file = request.FILES["file"]
         user = request.POST.get("username", None)
+        try:
+            data = file.read()
+            data = json.loads(data)            
+            if data:
+                add_json_to_db(file.name, data, user)
+            else:
+                return JsonResponse({
+                    "error":"Unable to upload data "
+                })
 
-        print("file", file, "user", user)
-
+        except Exception as e:
+            print("ERROR OCCURED...", e)
+            raise e
         return JsonResponse({
-            "message": "hello"
+            "message": "Data uploaded successfully..."
         })

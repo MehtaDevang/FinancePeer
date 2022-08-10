@@ -1,4 +1,4 @@
-from app.models import ApiUser
+from app.models import ApiUser, File
 
 INCORRECT_STRINGS = ["", None]
 
@@ -25,3 +25,10 @@ def create_new_user(username:str, password:str) -> ApiUser:
         print("Error occured in creating a new user")
         raise e
     
+def add_json_to_db(name:str, data:dict, username:str):
+    user = ApiUser.objects.get(username=username)
+    file_obj = File()
+    file_obj.name = name 
+    file_obj.uploaded_by = user
+    file_obj.content = data
+    file_obj.save()
